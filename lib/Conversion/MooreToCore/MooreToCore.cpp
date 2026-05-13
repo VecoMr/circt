@@ -2931,6 +2931,50 @@ struct DisplayBIOpConversion : public OpConversionPattern<DisplayBIOp> {
   }
 };
 
+struct FOpenBIOpConversion : public OpConversionPattern<FOpenBIOp> {
+  using OpConversionPattern::OpConversionPattern;
+
+  LogicalResult
+  matchAndRewrite(FOpenBIOp op, OpAdaptor adaptor,
+                  ConversionPatternRewriter &rewriter) const override {
+    rewriter.replaceOpWithNewOp<sim::FOpenOp>(op, adaptor.getFilename(), adaptor.getMode());
+    return success();
+  }
+};
+
+struct FCloseBIOpConversion : public OpConversionPattern<FCloseBIOp> {
+  using OpConversionPattern::OpConversionPattern;
+
+  LogicalResult matchAndRewrite(FCloseBIOp op, OpAdaptor adaptor,
+                  ConversionPatternRewriter &rewriter) const override {
+    rewriter.replaceOpWithNewOp<sim::FCloseOp>(op, adaptor.getFd());
+    return success();
+  }
+};
+
+struct FFlushBIOpConversion : public OpConversionPattern<FFlushBIOp> {
+  using OpConversionPattern::OpConversionPattern;
+
+  LogicalResult
+  matchAndRewrite(FFlushBIOp op, OpAdaptor adaptor,
+                  ConversionPatternRewriter &rewriter) const override {
+    rewriter.replaceOpWithNewOp<sim::FFlushOp>(op, adaptor.getFd());
+    return success();
+  }
+};
+
+struct FDisplayBIOpConversion : public OpConversionPattern<FDisplayBIOp> {
+  using OpConversionPattern::OpConversionPattern;
+
+  LogicalResult
+  matchAndRewrite(FDisplayBIOp op, OpAdaptor adaptor,
+                  ConversionPatternRewriter &rewriter) const override {
+    rewriter.replaceOpWithNewOp<sim::FPrintFormattedProcOp>(
+        op, adaptor.getFd(), adaptor.getMessage());
+    return success();
+  }
+};
+
 } // namespace
 
 //===----------------------------------------------------------------------===//
@@ -3477,6 +3521,12 @@ static void populateOpConversion(ConversionPatternSet &patterns,
     FormatIntOpConversion,
     FormatRealOpConversion,
     DisplayBIOpConversion,
+
+    // File I/O operations
+    FOpenBIOpConversion,
+    FCloseBIOpConversion,
+    FFlushBIOpConversion,
+    FDisplayBIOpConversion,
 
     // Dynamic string operations
     StringLenOpConversion,
