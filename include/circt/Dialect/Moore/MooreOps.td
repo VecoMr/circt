@@ -3068,6 +3068,20 @@ def SeverityBIOp : Builtin<"severity"> {
   let assemblyFormat = "$severity $message attr-dict";
 }
 
+def StrobeBIOp : Builtin<"strobe"> {
+  let summary = "Print a text message at the end of the current simulation time step";
+  let description = [{
+    Displays the given format string at the end of the current simulation
+    timestep, after all events have occured. this corresponds to the `$strobe`,
+    `$strobeb`, `$strobeo`, and `$strobeh` system tasks.
+    Message formatting is handled by `moore.fmt.*` ops.
+
+    see IEEE 1800-2017 § 21.2.2 "Strobed monitoring".
+  }];
+  let arguments = (ins FormatStringType:$message);
+  let assemblyFormat = "$message attr-dict";
+}
+
 //===----------------------------------------------------------------------===//
 // Math Builtins
 //===----------------------------------------------------------------------===//

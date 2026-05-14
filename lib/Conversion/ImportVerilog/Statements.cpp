@@ -1010,6 +1010,7 @@ struct StmtVisitor {
     using moore::IntFormat;
     bool isDisplay = false;
     bool appendNewline = false;
+    bool isStrobe = false;
     IntFormat defaultFormat = IntFormat::Decimal;
     switch (nameId) {
     case ksn::Display:
@@ -1046,6 +1047,25 @@ struct StmtVisitor {
       isDisplay = true;
       defaultFormat = IntFormat::HexLower;
       break;
+    case ksn::Strobe:
+      isStrobe = true;
+      appendNewline = true;
+      break;
+    case ksn::StrobeB:
+      isStrobe = true;
+      appendNewline = true;
+      defaultFormat = IntFormat::Binary;
+      break;
+    case ksn::StrobeO:
+      isStrobe = true;
+      appendNewline = true;
+      defaultFormat = IntFormat::Octal;
+      break;
+    case ksn::StrobeH:
+      isStrobe = true;
+      appendNewline = true;
+      defaultFormat = IntFormat::HexLower;
+      break;
     default:
       break;
     }
@@ -1058,6 +1078,17 @@ struct StmtVisitor {
       if (*message == Value{})
         return true;
       moore::DisplayBIOp::create(builder, loc, *message);
+      return true;
+    }
+
+    if (isStrobe) {
+      auto message =
+          context.convertFormatString(args, loc, defaultFormat, appendNewline);
+      if (failed(message))
+        return failure();
+      if (*message == Value{})
+        return true;
+      moore::StrobeBIOp::create(builder, loc, *message);
       return true;
     }
 

@@ -637,6 +637,17 @@ def PrintFormattedProcOp : SimOp<"proc.print", [ProceduralOp]> {
   let assemblyFormat = "$input (`to` $stream^)? attr-dict";
 }
 
+def StrobeFormattedProcOp : SimOp<"proc.strobe", [ProceduralOp]> {
+  let summary = "Print a formatted string at end of current timestep";
+  let description = [{
+    Evaluate a format string and print it at the end of the current simulation
+    timestep, after all simulation events have occured.
+    This operation must be within a procedural region.
+  }];
+  let arguments = (ins FormatStringType:$input);
+  let assemblyFormat = "$input attr-dict";
+}
+
 def GetFileOp : SimOp<"get_file", [Pure]> {
   let summary = "Get an output stream for a formatted file name";
   let description = [{

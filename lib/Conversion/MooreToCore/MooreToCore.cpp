@@ -2953,6 +2953,18 @@ struct DisplayBIOpConversion : public OpConversionPattern<DisplayBIOp> {
   }
 };
 
+struct StrobeBIOpConversion : public OpConversionPattern<StrobeBIOp> {
+  using OpConversionPattern::OpConversionPattern;
+
+  LogicalResult
+  matchAndRewrite(StrobeBIOp op, OpAdaptor adaptor,
+                  ConversionPatternRewriter &rewriter) const override {
+    rewriter.replaceOpWithNewOp<sim::StrobeFormattedProcOp>(
+        op, adaptor.getMessage());
+    return success();
+  }
+};
+
 } // namespace
 
 //===----------------------------------------------------------------------===//
